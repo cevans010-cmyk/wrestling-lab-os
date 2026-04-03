@@ -1,15 +1,25 @@
 export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
-      <div className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(0,255,220,0.15),_transparent_35%),linear-gradient(to_bottom,_#020202,_#071010_40%,_#020202)]">
+      <div className="relative min-h-screen overflow-hidden bg-black">
+        <div className="absolute inset-0">
+        <img
+          src="/bg.jpg"
+          alt="background"
+          className="w-full h-full object-cover opacity-55"
+        />
+      </div>
+      <div className="absolute inset-0 bg-black/10" />
         <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:40px_40px]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(0,255,220,0.08),_transparent_45%)]" />
 
         <header className="relative z-10 flex items-center justify-between border-b border-teal-400/20 px-6 py-5">
           <button className="flex items-center gap-3" aria-label="Go home">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-teal-400 text-black shadow-[0_0_30px_rgba(45,212,191,0.65)]">
-              <span className="text-xs font-black">WL</span>
-            </div>
+            <img
+               src="/logo.png"
+               alt="Wrestling Lab Logo"
+               className="h-14 w-14 rounded-full object-cover shadow-[0_0_30px_rgba(45,212,191,0.65)]"
+             />
             <div className="leading-tight">
               <p className="text-sm font-bold uppercase tracking-wide text-white">
                 The
@@ -98,8 +108,8 @@ export default function Home() {
                   Identify exactly what&apos;s holding you back
                 </p>
               </div>
-              <div className="ml-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-teal-400/40 text-3xl text-teal-400">
-                ⊕
+              <div className="ml-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-teal-400/40 text-teal-400">
+                 <span className="text-3xl">⌕</span>
               </div>
             </div>
 
@@ -110,8 +120,8 @@ export default function Home() {
                   Follow a proven system that actually works
                 </p>
               </div>
-              <div className="ml-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-teal-400/40 text-3xl text-teal-400">
-                ↓
+              <div className="ml-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-teal-400/40 text-teal-400">
+               <span className="text-3xl">⇡</span>
               </div>
             </div>
 
@@ -122,8 +132,8 @@ export default function Home() {
                   Win more matches with less guesswork
                 </p>
               </div>
-              <div className="ml-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-teal-400/40 text-3xl text-teal-400">
-                ↑
+              <div className="ml-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-teal-400/40 text-teal-400">
+                <span className="text-3xl">✦</span>
               </div>
             </div>
           </div>
