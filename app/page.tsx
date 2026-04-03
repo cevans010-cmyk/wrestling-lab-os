@@ -1,3 +1,4 @@
+import Link from "next/link";
 export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
@@ -82,9 +83,13 @@ export default function Home() {
             The best wrestlers train smarter.
           </p>
 
-          <button className="mt-10 w-full max-w-2xl rounded-full bg-teal-400 px-8 py-6 text-xl font-black uppercase tracking-wide text-black shadow-[0_0_35px_rgba(45,212,191,0.55)] transition hover:scale-[1.01]">
-            Get My Free Diagnosis
-          </button>
+          
+        <Link
+         href="/diagnosis"
+         className="mt-10 block w-full max-w-2xl rounded-full bg-teal-400 px-8 py-6 text-center text-xl font-black uppercase tracking-wide text-black shadow-[0_0_35px_rgba(45,212,191,0.55)] transition hover:scale-[1.01]"
+        >
+         Get My Free Diagnosis
+        </Link>
 
           <p className="mt-5 text-base text-zinc-400">
             Takes less than 5 minutes &nbsp;·&nbsp; No guesswork &nbsp;·&nbsp;
@@ -92,7 +97,7 @@ export default function Home() {
           </p>
 
           <p className="mt-4 text-lg font-bold uppercase tracking-wide text-zinc-400">
-            — Built by a 6x national champion —
+            — Built by a 6x national champion and national coach —
           </p>
 
           <p className="mt-12 text-2xl font-semibold italic text-zinc-300">
