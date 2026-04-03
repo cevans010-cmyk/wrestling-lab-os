@@ -1,13 +1,19 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function DiagnosisPage() {
-      useEffect(() => {
-    if (!localStorage.getItem("style")) {
+  const [style, setStyle] = useState("Freestyle wrestling");
+
+  useEffect(() => {
+    const savedStyle = localStorage.getItem("style");
+    if (savedStyle) {
+      setStyle(savedStyle);
+    } else {
       localStorage.setItem("style", "Freestyle wrestling");
     }
   }, []);
+
   return (
     <main className="min-h-screen text-white">
       <div className="relative min-h-screen overflow-hidden bg-black">
@@ -54,27 +60,27 @@ export default function DiagnosisPage() {
             </label>
 
             <select
-             defaultValue="Freestyle wrestling"
-             onChange={(e) => {
-                 localStorage.setItem("style", e.target.value);
-             }}
-             className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white"
+              value={style}
+              onChange={(e) => {
+                setStyle(e.target.value);
+                localStorage.setItem("style", e.target.value);
+              }}
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white"
             >
-             <option value="Freestyle wrestling">Freestyle wrestling</option>
-             <option value="MMA / BJJ Crossover">MMA / BJJ Crossover</option>
+              <option value="Freestyle wrestling">Freestyle wrestling</option>
+              <option value="MMA / BJJ Crossover">MMA / BJJ Crossover</option>
             </select>
           </div>
 
-         <Link
-             href="/diagnosis/step-2"
-             onClick={() => {
-                 const savedStyle = localStorage.getItem("style") || "Freestyle wrestling";
-                 localStorage.setItem("style", savedStyle);
-             }}
-             className="mt-10 block w-full max-w-xl rounded-full bg-teal-400 px-6 py-4 text-center text-lg font-black uppercase text-black shadow-[0_0_25px_rgba(45,212,191,0.5)]"
-         >
-             Continue
-         </Link>
+          <Link
+            href="/diagnosis/step-2"
+            onClick={() => {
+              localStorage.setItem("style", style);
+            }}
+            className="mt-10 block w-full max-w-xl rounded-full bg-teal-400 px-6 py-4 text-center text-lg font-black uppercase text-black shadow-[0_0_25px_rgba(45,212,191,0.5)]"
+          >
+            Continue
+          </Link>
         </div>
       </div>
     </main>

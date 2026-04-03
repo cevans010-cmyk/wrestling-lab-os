@@ -36,7 +36,7 @@ export default function DiagnosisStep2Page() {
           </p>
 
          <h1 className="text-4xl font-black uppercase tracking-tight text-white sm:text-5xl">
-             Step 2
+             Identify your biggest weakness
          </h1>
 
          <p className="mt-4 text-sm text-zinc-400">
@@ -48,7 +48,12 @@ export default function DiagnosisStep2Page() {
               What is your biggest current weakness?
             </label>
 
-            <select className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white">
+            <select
+             onChange={(e) => {
+                 localStorage.setItem("weakness", e.target.value);
+             }}
+             className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white"
+            >
               <option>Under-developed understanding of fundamentals</option>
               <option>Poor decision making under pressure</option>
               <option>Chain wrestling breakdown</option>
@@ -58,12 +63,27 @@ export default function DiagnosisStep2Page() {
             </select>
           </div>
 
-          <Link
-            href="/diagnosis"
-            className="mt-10 block w-full max-w-xl rounded-full border border-teal-400 px-6 py-4 text-center text-lg font-black uppercase text-teal-400"
-          >
-            Back
-          </Link>
+          <div className="mt-10 flex w-full max-w-xl gap-4">
+             <Link
+                 href="/diagnosis"
+                 className="block w-1/2 rounded-full border border-teal-400 px-6 py-4 text-center text-lg font-black uppercase text-teal-400"
+             >
+                 Back
+             </Link>
+
+             <Link
+                 href="/diagnosis/results"
+                 onClick={() => {
+                     const savedWeakness =
+                         localStorage.getItem("weakness") ||
+                         "Under-developed understanding of fundamentals";
+                     localStorage.setItem("weakness", savedWeakness);
+                 }}
+                 className="block w-1/2 rounded-full bg-teal-400 px-6 py-4 text-center text-lg font-black uppercase text-black shadow-[0_0_25px_rgba(45,212,191,0.5)]"
+             >
+                 Continue
+            </Link>
+         </div>
         </div>
       </div>
     </main>
