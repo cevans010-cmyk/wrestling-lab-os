@@ -142,10 +142,7 @@ export default function DiagnosisResultsPage() {
     primaryFactor = "Chain wrestling breakdown";
   }
 
-  if (
-    fatigueBreakdown === "Effort/output" ||
-    matchBreakdown === "Late in the match"
-  ) {
+  if (fatigueBreakdown === "Effort/output" || matchBreakdown === "Late in the match") {
     primaryFactor = "Physical conditioning limitation";
   }
 
@@ -627,9 +624,7 @@ export default function DiagnosisResultsPage() {
                   {scrambleConfidence}
                 </p>
                 <p>
-                  <span className="font-bold text-teal-400">
-                    Tactical awareness:
-                  </span>{" "}
+                  <span className="font-bold text-teal-400">Tactical awareness:</span>{" "}
                   {tacticalConfidence}
                 </p>
               </div>
@@ -646,9 +641,7 @@ export default function DiagnosisResultsPage() {
                   {relianceType}
                 </p>
                 <p>
-                  <span className="font-bold text-teal-400">
-                    Fatigue breakdown:
-                  </span>{" "}
+                  <span className="font-bold text-teal-400">Fatigue breakdown:</span>{" "}
                   {fatigueBreakdown}
                 </p>
                 <p>
