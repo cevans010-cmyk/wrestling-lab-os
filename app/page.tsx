@@ -69,9 +69,7 @@ export default function Home() {
             improvement plan in under
           </p>
 
-          <p className="mt-6 text-lg font-bold uppercase tracking-[0.25em] text-zinc-500">
-            Get results in
-          </p>
+         
 
           <div className="mt-1 text-7xl font-black uppercase leading-none tracking-tight text-teal-400 drop-shadow-[0_0_24px_rgba(45,212,191,0.6)] sm:text-8xl">
             5 Minutes

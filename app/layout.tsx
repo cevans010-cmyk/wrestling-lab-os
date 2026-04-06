@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import {supabase} from "@/lib/supabase";
+
+const handleLogout = async () => {
+  await supabase.auth.signOut ();
+  window.location.href = "/auth";
+};
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

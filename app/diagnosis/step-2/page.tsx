@@ -1,20 +1,65 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 export default function DiagnosisStep2Page() {
-  const [matchBreakdown, setMatchBreakdown] = useState(
-    "During attack entry"
-  );
+  const router = useRouter();
+
+  const [matchBreakdown, setMatchBreakdown] = useState("During attack entry");
   const [attackOutcome, setAttackOutcome] = useState(
     "I get in but cannot finish"
   );
   const [defenseResponse, setDefenseResponse] = useState(
     "I defend but lose position after"
   );
-  const [postAttackReaction, setPostAttackReaction] = useState(
-    "I hesitate"
-  );
+  const [postAttackReaction, setPostAttackReaction] = useState("I hesitate");
+  const [isSaving, setIsSaving] = useState(false);
+  const [isCheckingAccess, setIsCheckingAccess] = useState(true);
+
+  useEffect(() => {
+    const checkExistingDiagnosis = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user) {
+          router.push("/auth");
+          return;
+        }
+
+        const diagnosisId = localStorage.getItem("currentDiagnosisId");
+
+        const { data, error } = await supabase
+          .from("diagnoses")
+          .select("id, completed")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (error) {
+          console.error(error);
+          return;
+        }
+
+        if (data?.completed) {
+          router.push("/diagnosis/locked");
+          return;
+        }
+
+        if (data?.id && diagnosisId && data.id !== diagnosisId) {
+          router.push("/diagnosis/locked");
+          return;
+        }
+      } finally {
+        setIsCheckingAccess(false);
+      }
+    };
+
+    checkExistingDiagnosis();
+  }, [router]);
 
   useEffect(() => {
     const savedMatchBreakdown =
@@ -33,6 +78,69 @@ export default function DiagnosisStep2Page() {
     setPostAttackReaction(savedPostAttackReaction);
   }, []);
 
+  const handleContinue = async () => {
+    try {
+      setIsSaving(true);
+
+      const diagnosisId = localStorage.getItem("currentDiagnosisId");
+
+      if (!diagnosisId) {
+        alert("No active diagnosis found. Please restart the diagnosis.");
+        router.push("/diagnosis");
+        return;
+      }
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.push("/auth");
+        return;
+      }
+
+      const { error } = await supabase
+        .from("diagnoses")
+        .update({
+          match_breakdown: matchBreakdown,
+          attack_outcome: attackOutcome,
+          defense_response: defenseResponse,
+          post_attack_reaction: postAttackReaction,
+        })
+        .eq("id", diagnosisId)
+        .eq("user_id", user.id);
+
+      if (error) {
+        console.error("Error updating diagnosis:", error);
+        alert(`Could not save Step 2: ${error.message}`);
+        return;
+      }
+
+      localStorage.setItem("matchBreakdown", matchBreakdown);
+      localStorage.setItem("attackOutcome", attackOutcome);
+      localStorage.setItem("defenseResponse", defenseResponse);
+      localStorage.setItem("postAttackReaction", postAttackReaction);
+
+      router.push("/diagnosis/step-3");
+    } catch (err) {
+      console.error("Step 2 crash:", err);
+      alert("Something went wrong saving Step 2.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (isCheckingAccess) {
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-black uppercase">Loading</h1>
+          <p className="mt-4 text-zinc-400">Checking access.</p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen text-white">
       <div className="relative min-h-screen overflow-hidden bg-black">
@@ -45,11 +153,8 @@ export default function DiagnosisStep2Page() {
         </div>
 
         <div className="absolute inset-0 bg-black/10" />
-
         <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] [background-size:42px_42px]" />
-
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(0,255,220,0.08),_transparent_40%)]" />
-
         <div className="absolute inset-x-0 top-[18%] h-px bg-gradient-to-r from-transparent via-teal-400/35 to-transparent" />
 
         <div className="relative z-10 mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-6 py-16 text-center">
@@ -73,10 +178,7 @@ export default function DiagnosisStep2Page() {
 
             <select
               value={matchBreakdown}
-              onChange={(e) => {
-                setMatchBreakdown(e.target.value);
-                localStorage.setItem("matchBreakdown", e.target.value);
-              }}
+              onChange={(e) => setMatchBreakdown(e.target.value)}
               className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white"
             >
               <option value="Before contact (distance/timing)">
@@ -110,10 +212,7 @@ export default function DiagnosisStep2Page() {
 
             <select
               value={attackOutcome}
-              onChange={(e) => {
-                setAttackOutcome(e.target.value);
-                localStorage.setItem("attackOutcome", e.target.value);
-              }}
+              onChange={(e) => setAttackOutcome(e.target.value)}
               className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white"
             >
               <option value="I rarely get to a clean attack">
@@ -141,10 +240,7 @@ export default function DiagnosisStep2Page() {
 
             <select
               value={defenseResponse}
-              onChange={(e) => {
-                setDefenseResponse(e.target.value);
-                localStorage.setItem("defenseResponse", e.target.value);
-              }}
+              onChange={(e) => setDefenseResponse(e.target.value)}
               className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white"
             >
               <option value="I get scored on easily">
@@ -168,10 +264,7 @@ export default function DiagnosisStep2Page() {
 
             <select
               value={postAttackReaction}
-              onChange={(e) => {
-                setPostAttackReaction(e.target.value);
-                localStorage.setItem("postAttackReaction", e.target.value);
-              }}
+              onChange={(e) => setPostAttackReaction(e.target.value)}
               className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white"
             >
               <option value="I stop attacking">I stop attacking</option>
@@ -194,21 +287,13 @@ export default function DiagnosisStep2Page() {
               Back
             </Link>
 
-            <Link
-              href="/diagnosis/step-3"
-              onClick={() => {
-                localStorage.setItem("matchBreakdown", matchBreakdown);
-                localStorage.setItem("attackOutcome", attackOutcome);
-                localStorage.setItem("defenseResponse", defenseResponse);
-                localStorage.setItem(
-                  "postAttackReaction",
-                  postAttackReaction
-                );
-              }}
-              className="block w-1/2 rounded-full bg-teal-400 px-6 py-4 text-center text-lg font-black uppercase text-black shadow-[0_0_25px_rgba(45,212,191,0.5)]"
+            <button
+              onClick={handleContinue}
+              disabled={isSaving}
+              className="block w-1/2 rounded-full bg-teal-400 px-6 py-4 text-center text-lg font-black uppercase text-black shadow-[0_0_25px_rgba(45,212,191,0.5)] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Continue
-            </Link>
+              {isSaving ? "Saving..." : "Continue"}
+            </button>
           </div>
         </div>
       </div>
