@@ -4,10 +4,11 @@ import { NextResponse } from "next/server";
 // Toggle this to control AI usage
 const USE_AI = false;
 
-// OpenAI client (only used if USE_AI = true)
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// OpenAI client (only created if USE_AI = true)
+const client =
+  USE_AI && process.env.OPENAI_API_KEY
+    ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+    : null;
 
 type Confidence = "Low" | "Medium" | "High";
 type PriorityLevel = "Low" | "Medium" | "High";
@@ -57,10 +58,6 @@ type RuleInput = {
 
 function isLow(value?: string): boolean {
   return value === "Very low" || value === "Low";
-}
-
-function isMediumOrLower(value?: string): boolean {
-  return value === "Very low" || value === "Low" || value === "Medium";
 }
 
 function clampScore(score: number): number {
@@ -332,12 +329,13 @@ export async function POST(req: Request) {
   try {
     const body: RuleInput = await req.json();
 
+    // Beta mode: use rule-based diagnosis only, no OpenAI cost
     if (!USE_AI) {
       const ruleBasedDiagnosis = buildRuleBasedDiagnosis(body);
       return NextResponse.json(ruleBasedDiagnosis);
     }
 
-    if (!process.env.OPENAI_API_KEY) {
+    if (!client) {
       return NextResponse.json(
         { error: "Missing OpenAI API key" },
         { status: 500 }
@@ -406,7 +404,7 @@ Archetype: ${body.archetype}
       );
     }
 
-    let parsed;
+    let parsed: DiagnosisResult;
 
     try {
       parsed = JSON.parse(text);
